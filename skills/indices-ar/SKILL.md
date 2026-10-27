@@ -6,11 +6,11 @@ author: Joaquín Torletti
 metadata:
   openclaw:
     emoji: "📈"
-    homepage: "https://indices-ar-api.vercel.app"
+    homepage: "https://indices-ar-api-103907796853.us-east1.run.app"
     envVars:
       - name: INDICES_AR_API_KEY
         required: false
-        description: "API key (ak_...). Si falta, pedí una gratis con POST https://indices-ar-api.vercel.app/v1/keys"
+        description: "API key (ak_...). Si falta, pedí una gratis con POST https://indices-ar-api-103907796853.us-east1.run.app/v1/keys"
   hermes:
     tags: [argentina, inflacion, uva, icl, alquiler, dolar, fintech, mcp]
 ---
@@ -21,9 +21,9 @@ metadata:
 
 | Puerta | URL | Cuándo usarla |
 |---|---|---|
-| MCP remoto (Streamable HTTP) | `https://indices-ar-api.vercel.app/mcp` | OpenClaw, Hermes, Claude, Cursor: cualquier cliente MCP |
-| REST + OpenAPI | `https://indices-ar-api.vercel.app/openapi.json` | Agentes custom o sin cliente MCP |
-| Esta skill | `https://indices-ar-api.vercel.app/skill.md` | Para saber cuándo y cómo llamar |
+| MCP remoto (Streamable HTTP) | `https://indices-ar-api-103907796853.us-east1.run.app/mcp` | OpenClaw, Hermes, Claude, Cursor: cualquier cliente MCP |
+| REST + OpenAPI | `https://indices-ar-api-103907796853.us-east1.run.app/openapi.json` | Agentes custom o sin cliente MCP |
+| Esta skill | `https://indices-ar-api-103907796853.us-east1.run.app/skill.md` | Para saber cuándo y cómo llamar |
 
 ## Tools y costo
 
@@ -44,18 +44,18 @@ Fuentes: BCRA (UVA, CER, ICL, IPC) e INDEC vía argentinadatos.com (inflación m
 Sin registro:
 
 ```bash
-curl -X POST https://indices-ar-api.vercel.app/v1/keys -H 'content-type: application/json' -d '{"name":"mi-agente"}'
+curl -X POST https://indices-ar-api-103907796853.us-east1.run.app/v1/keys -H 'content-type: application/json' -d '{"name":"mi-agente"}'
 ```
 
 La respuesta trae `key` (empieza con `ak_`). Guardala y enviala siempre como header `Authorization: Bearer ak_...`. Sin créditos la API responde HTTP 402 con `checkout_url`: mostrásela al usuario y no reintentes en loop.
 
 ### Comprar créditos
 
-Hay packs de créditos (ver `GET https://indices-ar-api.vercel.app/v1/packs`). Para recargar la key del usuario:
+Hay packs de créditos (ver `GET https://indices-ar-api-103907796853.us-east1.run.app/v1/packs`). Para recargar la key del usuario:
 
 - Por MCP: llamá a la tool `comprar_creditos` (sin costo); devuelve `checkout_url`.
-- Por REST: `POST https://indices-ar-api.vercel.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
-- Un humano también puede abrir `https://indices-ar-api.vercel.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
+- Por REST: `POST https://indices-ar-api-103907796853.us-east1.run.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
+- Un humano también puede abrir `https://indices-ar-api-103907796853.us-east1.run.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
 
 Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos se acreditan solos en segundos. Después consultá `GET /v1/balance` y seguí.
 
@@ -65,7 +65,7 @@ Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos 
 {
   "mcpServers": {
     "indices-ar": {
-      "url": "https://indices-ar-api.vercel.app/mcp",
+      "url": "https://indices-ar-api-103907796853.us-east1.run.app/mcp",
       "headers": { "Authorization": "Bearer ak_TU_KEY" }
     }
   }
@@ -75,7 +75,7 @@ Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos 
 ## Usar por REST
 
 ```bash
-curl -X POST https://indices-ar-api.vercel.app/v1/tools/actualizar_alquiler \
+curl -X POST https://indices-ar-api-103907796853.us-east1.run.app/v1/tools/actualizar_alquiler \
   -H 'Authorization: Bearer ak_TU_KEY' -H 'content-type: application/json' \
   -d '{"monto_inicial":500000,"fecha_inicio":"2025-01-01","indice":"icl","periodicidad_meses":3}'
 ```

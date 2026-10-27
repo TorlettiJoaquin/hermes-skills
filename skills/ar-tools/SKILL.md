@@ -6,11 +6,11 @@ author: Joaquín Torletti
 metadata:
   openclaw:
     emoji: "🇦🇷"
-    homepage: "https://ar-tools-api.vercel.app"
+    homepage: "https://ar-tools-api-103907796853.us-east1.run.app"
     envVars:
       - name: AR_TOOLS_API_KEY
         required: false
-        description: "API key (ak_...). Si falta, pedí una gratis con POST https://ar-tools-api.vercel.app/v1/keys"
+        description: "API key (ak_...). Si falta, pedí una gratis con POST https://ar-tools-api-103907796853.us-east1.run.app/v1/keys"
   hermes:
     tags: [argentina, cuit, cbu, dolar, fintech, mcp, latam]
 ---
@@ -21,9 +21,9 @@ API de datos argentinos pensada para agentes. Un mismo backend se consume de tre
 
 | Puerta | URL | Cuándo usarla |
 |---|---|---|
-| MCP remoto (Streamable HTTP) | `https://ar-tools-api.vercel.app/mcp` | OpenClaw, Hermes, Claude, Cursor: cualquier cliente MCP |
-| REST + OpenAPI | `https://ar-tools-api.vercel.app/openapi.json` | Agentes custom o cuando no hay cliente MCP |
-| Esta skill | `https://ar-tools-api.vercel.app/skill.md` | Para saber cuándo y cómo llamar |
+| MCP remoto (Streamable HTTP) | `https://ar-tools-api-103907796853.us-east1.run.app/mcp` | OpenClaw, Hermes, Claude, Cursor: cualquier cliente MCP |
+| REST + OpenAPI | `https://ar-tools-api-103907796853.us-east1.run.app/openapi.json` | Agentes custom o cuando no hay cliente MCP |
+| Esta skill | `https://ar-tools-api-103907796853.us-east1.run.app/skill.md` | Para saber cuándo y cómo llamar |
 
 ## Tools y costo
 
@@ -42,7 +42,7 @@ Solo se cobra una llamada exitosa. Un input inválido (CUIT mal formado) es una 
 Sin registro. Pedí una key de prueba:
 
 ```bash
-curl -X POST https://ar-tools-api.vercel.app/v1/keys -H 'content-type: application/json' -d '{"name":"mi-agente"}'
+curl -X POST https://ar-tools-api-103907796853.us-east1.run.app/v1/keys -H 'content-type: application/json' -d '{"name":"mi-agente"}'
 ```
 
 La respuesta trae `key` (empieza con `ak_`). Guardala: no se vuelve a mostrar. Enviala siempre como header `Authorization: Bearer ak_...`.
@@ -51,11 +51,11 @@ Cuando se acaben los créditos la API responde HTTP 402 con `checkout_url`. Most
 
 ### Comprar créditos
 
-Hay packs de créditos (ver `GET https://ar-tools-api.vercel.app/v1/packs`). Para recargar la key del usuario:
+Hay packs de créditos (ver `GET https://ar-tools-api-103907796853.us-east1.run.app/v1/packs`). Para recargar la key del usuario:
 
 - Por MCP: llamá a la tool `comprar_creditos` (sin costo); devuelve `checkout_url`.
-- Por REST: `POST https://ar-tools-api.vercel.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
-- Un humano también puede abrir `https://ar-tools-api.vercel.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
+- Por REST: `POST https://ar-tools-api-103907796853.us-east1.run.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
+- Un humano también puede abrir `https://ar-tools-api-103907796853.us-east1.run.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
 
 Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos se acreditan solos en segundos. Después consultá `GET /v1/balance` y seguí.
 
@@ -67,7 +67,7 @@ Agregá el servidor a la configuración MCP de tu agente. La forma genérica es:
 {
   "mcpServers": {
     "ar-tools": {
-      "url": "https://ar-tools-api.vercel.app/mcp",
+      "url": "https://ar-tools-api-103907796853.us-east1.run.app/mcp",
       "headers": { "Authorization": "Bearer ak_TU_KEY" }
     }
   }
@@ -78,10 +78,10 @@ Hermes y OpenClaw aceptan servidores MCP remotos con URL y headers; revisá en l
 
 ## Usar por REST
 
-Cada tool es `POST https://ar-tools-api.vercel.app/v1/tools/<nombre>` con un JSON de entrada:
+Cada tool es `POST https://ar-tools-api-103907796853.us-east1.run.app/v1/tools/<nombre>` con un JSON de entrada:
 
 ```bash
-curl -X POST https://ar-tools-api.vercel.app/v1/tools/validar_cuit \
+curl -X POST https://ar-tools-api-103907796853.us-east1.run.app/v1/tools/validar_cuit \
   -H 'Authorization: Bearer ak_TU_KEY' -H 'content-type: application/json' \
   -d '{"cuit":"30-50001091-2"}'
 ```
@@ -93,7 +93,7 @@ Respuesta:
   "credits": { "cost": 1, "balance": 49 } }
 ```
 
-Saldo: `GET https://ar-tools-api.vercel.app/v1/balance` con la misma key.
+Saldo: `GET https://ar-tools-api-103907796853.us-east1.run.app/v1/balance` con la misma key.
 
 ## Code Mode: `ejecutar`
 
