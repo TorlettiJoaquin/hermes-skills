@@ -49,6 +49,16 @@ La respuesta trae `key` (empieza con `ak_`). Guardala: no se vuelve a mostrar. E
 
 Cuando se acaben los créditos la API responde HTTP 402 con `checkout_url`. Mostrale esa URL al usuario para que recargue; no reintentes la llamada en loop.
 
+### Comprar créditos
+
+Hay packs de créditos (ver `GET https://ar-tools-api.vercel.app/v1/packs`). Para recargar la key del usuario:
+
+- Por MCP: llamá a la tool `comprar_creditos` (sin costo); devuelve `checkout_url`.
+- Por REST: `POST https://ar-tools-api.vercel.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
+- Un humano también puede abrir `https://ar-tools-api.vercel.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
+
+Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos se acreditan solos en segundos. Después consultá `GET /v1/balance` y seguí.
+
 ## Configurar como servidor MCP
 
 Agregá el servidor a la configuración MCP de tu agente. La forma genérica es:
@@ -105,5 +115,5 @@ Costo: 1 crédito por ejecución más la suma de las llamadas internas. Si una l
 - Antes de validar un CUIT o CBU, no intentes calcular el dígito verificador vos: usá la tool, es más barata que equivocarse.
 - Para el dólar, pedí solo la casa que necesitás (`casa: "blue"`) salvo que el usuario quiera comparar.
 - Para más de 3 llamadas seguidas, usá `ejecutar` con un solo script.
-- Si recibís `insufficient_credits`, informá el saldo y la `checkout_url` y detenete.
+- Si recibís `insufficient_credits`, llamá a `comprar_creditos` (o `POST /v1/checkout`), mostrá la `checkout_url` al usuario y esperá a que recargue; no reintentes en loop.
 - Si recibís `upstream_error`, avisá que la fuente externa falló; podés reintentar una vez.

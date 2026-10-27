@@ -48,6 +48,16 @@ curl -X POST https://direcciones-ar-api.vercel.app/v1/keys -H 'content-type: app
 
 La respuesta trae `key` (empieza con `ak_`). Guardala y enviala siempre como header `Authorization: Bearer ak_...`. Sin créditos la API responde HTTP 402 con `checkout_url`: mostrásela al usuario y no reintentes en loop.
 
+### Comprar créditos
+
+Hay packs de créditos (ver `GET https://direcciones-ar-api.vercel.app/v1/packs`). Para recargar la key del usuario:
+
+- Por MCP: llamá a la tool `comprar_creditos` (sin costo); devuelve `checkout_url`.
+- Por REST: `POST https://direcciones-ar-api.vercel.app/v1/checkout` con la key, body opcional `{"credits": 500}`; devuelve `checkout_url`.
+- Un humano también puede abrir `https://direcciones-ar-api.vercel.app/comprar?key_id=<key_id>` (el `key_id` viene en el 402 y en `/v1/balance`).
+
+Mostrá la `checkout_url` al usuario: paga con tarjeta en Polar y los créditos se acreditan solos en segundos. Después consultá `GET /v1/balance` y seguí.
+
 ## Configurar como servidor MCP
 
 ```json
@@ -97,4 +107,4 @@ Costo: 1 crédito por ejecución más la suma de las llamadas internas. Si una l
 - Si `ambigua` es true, mostrá los `candidatos` con su localidad y dejá elegir; no asumas el primero sin decirlo.
 - La `nomenclatura` es la forma oficial: usala para cargar formularios o etiquetas de envío.
 - Para más de 3 direcciones, usá `ejecutar` con un solo script.
-- Si recibís `insufficient_credits`, informá saldo y `checkout_url` y detenete. Si recibís `upstream_error`, avisá que la fuente falló; podés reintentar una vez.
+- Si recibís `insufficient_credits`, llamá a `comprar_creditos` (o `POST /v1/checkout`), mostrá la `checkout_url` al usuario y esperá a que recargue; no reintentes en loop. Si recibís `upstream_error`, avisá que la fuente falló; podés reintentar una vez.
