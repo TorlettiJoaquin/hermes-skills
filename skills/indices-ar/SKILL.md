@@ -1,0 +1,77 @@
+---
+name: indices-ar
+description: Índices económicos argentinos y ajustes de montos para agentes (UVA, CER, ICL, inflación IPC, dólar histórico, días hábiles). Usar cuando el usuario pida actualizar un alquiler, ajustar un monto por inflación, convertir pesos a UVA, saber el valor de un índice en una fecha, el dólar de un día pasado o calcular un vencimiento en días hábiles. Servidor MCP remoto + REST; cobra por créditos prepagos con key de prueba gratis.
+version: 0.1.0
+author: Joaquín Torletti
+metadata:
+  openclaw:
+    emoji: "📈"
+    homepage: "https://indices-ar-api.vercel.app"
+    envVars:
+      - name: INDICES_AR_API_KEY
+        required: false
+        description: "API key (ak_...). Si falta, pedí una gratis con POST https://indices-ar-api.vercel.app/v1/keys"
+  hermes:
+    tags: [argentina, inflacion, uva, icl, alquiler, dolar, fintech, mcp]
+---
+
+# Índices AR
+
+Índices económicos argentinos y cálculos de ajuste, listos para agentes. Un mismo backend se consume de tres formas:
+
+| Puerta | URL | Cuándo usarla |
+|---|---|---|
+| MCP remoto (Streamable HTTP) | `https://indices-ar-api.vercel.app/mcp` | OpenClaw, Hermes, Claude, Cursor: cualquier cliente MCP |
+| REST + OpenAPI | `https://indices-ar-api.vercel.app/openapi.json` | Agentes custom o sin cliente MCP |
+| Esta skill | `https://indices-ar-api.vercel.app/skill.md` | Para saber cuándo y cómo llamar |
+
+## Tools y costo
+
+| Tool | Qué hace | Créditos |
+|---|---|---|
+| `indice_valor` | Valor de UVA, CER, ICL, IPC mensual o interanual en una fecha (o el último) | 1 |
+| `ajustar_monto` | Actualiza un monto entre dos fechas por UVA, CER, ICL o inflación; devuelve factor y variación % | 2 |
+| `actualizar_alquiler` | Cronograma completo de un alquiler: monto vigente por período, variación y próximo ajuste (ICL, IPC o UVA; cada 3, 4, 6 o 12 meses) | 3 |
+| `convertir_uva` | Pesos a UVA o UVA a pesos a una fecha | 1 |
+| `dolar_historico` | Cotización de una fecha pasada: oficial, blue, bolsa, contadoconliqui, mayorista, cripto, tarjeta | 1 |
+| `dias_habiles` | Cuenta días hábiles entre fechas o suma N días hábiles para un vencimiento, con feriados nacionales | 1 |
+
+Fuentes: BCRA (UVA, CER, ICL, IPC) e INDEC vía argentinadatos.com (inflación mensual, dólar histórico, feriados). Solo se cobra la llamada exitosa; si la fuente falla (502) no se cobra.
+
+## Conseguir una API key
+
+Sin registro:
+
+```bash
+curl -X POST https://indices-ar-api.vercel.app/v1/keys -H 'content-type: application/json' -d '{"name":"mi-agente"}'
+```
+
+La respuesta trae `key` (empieza con `ak_`). Guardala y enviala siempre como header `Authorization: Bearer ak_...`. Sin créditos la API responde HTTP 402 con `checkout_url`: mostrásela al usuario y no reintentes en loop.
+
+## Configurar como servidor MCP
+
+```json
+{
+  "mcpServers": {
+    "indices-ar": {
+      "url": "https://indices-ar-api.vercel.app/mcp",
+      "headers": { "Authorization": "Bearer ak_TU_KEY" }
+    }
+  }
+}
+```
+
+## Usar por REST
+
+```bash
+curl -X POST https://indices-ar-api.vercel.app/v1/tools/actualizar_alquiler \
+  -H 'Authorization: Bearer ak_TU_KEY' -H 'content-type: application/json' \
+  -d '{"monto_inicial":500000,"fecha_inicio":"2025-01-01","indice":"icl","periodicidad_meses":3}'
+```
+
+## Reglas para el agente
+
+- No calcules ajustes a mano ni estimes índices: usá la tool y citá la fecha del dato (`fecha_dato`) en la respuesta.
+- Para alquileres, confirmá con el usuario índice y periodicidad del contrato antes de llamar; el resultado es informativo y la cláusula del contrato manda.
+- Para IPC, el último mes disponible viene en `ultimo_mes_ipc_disponible`: si la fecha pedida es posterior, aclaralo.
+- Si recibís `insufficient_credits`, informá saldo y `checkout_url` y detenete. Si recibís `upstream_error`, avisá que la fuente falló; podés reintentar una vez.
