@@ -1,7 +1,7 @@
 ---
 name: ar-tools
 description: Validaciones y datos de Argentina para agentes (CUIT/CUIL, CBU/CVU, teléfonos, cotización del dólar). Usar cuando el usuario mencione un CUIT, CUIL, CBU, CVU, un teléfono argentino o pregunte el valor del dólar en Argentina. Servidor MCP remoto + REST; cobra por créditos prepagos con key de prueba gratis.
-version: 0.1.0
+version: 0.1.1
 author: Joaquín Torletti
 metadata:
   openclaw:
