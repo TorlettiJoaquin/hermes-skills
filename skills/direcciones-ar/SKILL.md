@@ -1,7 +1,7 @@
 ---
 name: direcciones-ar
 description: Direcciones argentinas para agentes con el callejero oficial (georef, INDEC/IGN): normalizar y geocodificar una dirección escrita a mano, geocodificación inversa lat/lon → provincia/partido/municipio, buscar calles y localidades, resolver provincias/departamentos/municipios con ids oficiales. Usar cuando el usuario pase una dirección de Argentina para validar, completar, geolocalizar o cargar en un formulario, o pregunte a qué partido/provincia pertenece un lugar. Servidor MCP remoto + REST; cobra por créditos prepagos con key de prueba gratis.
-version: 0.1.0
+version: 0.1.1
 author: Joaquín Torletti
 metadata:
   openclaw:
